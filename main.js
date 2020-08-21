@@ -4,15 +4,14 @@ const questionFrame = document.getElementById("question-frame")
 const questionBox = document.getElementById("question-box")
 const questionNavButtons = document.getElementById("question-nav-buttons")
 const answerBox = document.getElementById("answer-box")
-const answerField = document.getElementById("answer-field")
+const resultsBox = document.getElementById("results-box")
+const resultsList = document.getElementById("results-list")
 
 let currentQuestionNumber = 0
 
-const createAnswerBox  = () => {
-    answerBox.style.display = "block"
-}
+let quiz = quiz1
 
-const updateAnswerBox = (type = "freeform") => {
+const updateAnswerBox = (type) => {
     if (type === "freeform") {
         answerBox.innerHTML = `<form id='answer-form' autocomplete='off'>
         <input type='text' id='answer-field' maxlength='20'>
@@ -20,28 +19,62 @@ const updateAnswerBox = (type = "freeform") => {
     }
 }
 
-const updateQuestionBox = () => {
-    questionBox.innerHTML = `<p>${(currentQuestionNumber + 1)}. ${quiz1._questions[currentQuestionNumber]._questionText}</p>`
+const updateQuestionBox = (type) => {
+    console.log(currentQuestionNumber)
+    if (type === "freeform") {
+        questionBox.innerHTML = `<p>${(currentQuestionNumber + 1)}. ${quiz._questions[currentQuestionNumber]._questionText}</p>`
+    }
 }
 
-const loadQuestion = () => {
-    updateAnswerBox()
-    updateQuestionBox()
-}
-
-const nextQuestion = () => {
-    currentQuestionNumber++
-    updateAnswerBox()
-    updateQuestionBox()
+const nextQuestion = (start = false) => {
+    console.log("nextQuestion called")
+    console.log(start)
+    if (start === false) {
+        console.log("Incrementing currentQuestionNumber")
+        const answerField = document.getElementById("answer-field")
+        quiz._questions[currentQuestionNumber]._userAnswer = answerField.value.toLowerCase()
+        currentQuestionNumber++
+    }
+    if (currentQuestionNumber === (quiz._questions.length - 1)) {
+        nextButton.firstElementChild.innerHTML = "Finish"
+        nextButton.onclick = end
+    }
+    updateAnswerBox(quiz._questions[currentQuestionNumber]._type)
+    updateQuestionBox(quiz._questions[currentQuestionNumber]._type)
 }
 
 const start = () => {
-    loadQuestion()
-    createAnswerBox()
+    nextQuestion(true)
+    answerBox.style.display = "flex"
     questionNavButtons.style.justifyContent = "space-between"
     backButton.style.display = "flex"
     nextButton.firstElementChild.innerHTML = "Next"
-    nextButton.onclick = loadQuestion
+    nextButton.onclick = (event) => nextQuestion(false)
+}
+
+const createResultItems = () => {
+    quiz._questions.forEach(question => {
+        let result = ""
+        if (question._result === true) {
+            result = "Correct!"
+        } else {
+            result = "Incorrect!"
+        }
+        const listItem = resultsList.appendChild(document.createElement("li"))
+        listItem.innerHTML = `<h3>${question._questionText}</h3>
+        <p class="question-result">${result}</p>
+        <p>You answered: <span class="user-answer">${question._userAnswer}</span></p>
+        <p>The correct answer was: <span class="correct-answer">${question._answers[question._correctAnswer]}</span></p>`
+    })
+}
+
+const end = () => {
+    resultsBox.style.display = "flex"
+    answerBox.style.display = "none"
+    questionNavButtons.style.display = "none"
+    questionBox.innerHTML = `<p>FINAL RESULTS</p>`
+    quiz.markQuiz()
+    createResultItems(quiz)
 }
 
 const initialLoad = () => {

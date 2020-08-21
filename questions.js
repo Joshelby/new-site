@@ -1,19 +1,15 @@
 class Question {
-    constructor(questionText, answers, correctAnswer) {
+    constructor(questionText, answers, correctAnswer, type) {
         this._questionText = questionText
         this._answers = answers
         this._correctAnswer = correctAnswer
+        this._type = type
         this._userAnswer
-    }
-
-    set userAnswer(answer) {
-        if (answer = string) {
-            this._userAnswer = answer.toLowerCase()
-        }
+        this._result
     }
 
     checkAnswer() {
-        return (this._userAnswer === this.answers[correctAnswer])
+        this._result = (this._userAnswer === this._answers[this._correctAnswer])
     }
 }
 
@@ -22,13 +18,17 @@ class Quiz {
         this._questions = []
     }
 
-    addQuestion(questionText, answers, correctAnswer) {
-        this._questions.push(new Question(questionText, answers, correctAnswer))
+    addQuestion(questionText, answers, correctAnswer, type) {
+        this._questions.push(new Question(questionText, answers, correctAnswer, type))
+    }
+
+    markQuiz() {
+        this._questions.forEach(question => question.checkAnswer())
     }
 }
 
 let test = "hello"
 
 const quiz1 = new Quiz()
-quiz1.addQuestion("What is the name of Yasuo's brother?", ["steve", "yone", "dave", "ben"], 1)
-quiz1.addQuestion("How much gold does B.F. Sword cost?", ["1300", "1200", "1500", "1600"], 0)
+quiz1.addQuestion("What is the name of Yasuo's brother?", ["steve", "yone", "dave", "ben"], 1, "freeform")
+quiz1.addQuestion("How much gold does B.F. Sword cost?", ["1300", "1200", "1500", "1600"], 0, "freeform")
