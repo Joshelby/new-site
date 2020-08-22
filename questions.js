@@ -7,9 +7,8 @@ class Question {
         this._userAnswer
         this._result
     }
-
     checkAnswer() {
-        this._result = (this._userAnswer === this._answers[this._correctAnswer])
+        this._result = (this._userAnswer.toLowerCase() === this._answers[this._correctAnswer])
     }
 }
 
@@ -17,14 +16,18 @@ class Quiz {
     constructor() {
         this._questions = []
     }
-
     addQuestion(questionText, answers, correctAnswer, type) {
         this._questions.push(new Question(questionText, answers, correctAnswer, type))
     }
-
     markQuiz() {
         this._questions.forEach(question => question.checkAnswer())
     }
+}
+
+function toTitleCase(string) {
+    const capLetter = string[0].toUpperCase()
+    const capString = capLetter + string.slice(1)
+    return capString
 }
 
 let test = "hello"

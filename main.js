@@ -1,9 +1,11 @@
 const nextButton = document.getElementById("next-button")
 const backButton = document.getElementById("back-button")
+const questionSection = document.getElementById("question-section")
 const questionFrame = document.getElementById("question-frame")
 const questionBox = document.getElementById("question-box")
 const questionNavButtons = document.getElementById("question-nav-buttons")
 const answerBox = document.getElementById("answer-box")
+const resultsHeader = document.getElementById("results-header")
 const resultsBox = document.getElementById("results-box")
 const resultsList = document.getElementById("results-list")
 
@@ -32,7 +34,7 @@ const nextQuestion = (start = false) => {
     if (start === false) {
         console.log("Incrementing currentQuestionNumber")
         const answerField = document.getElementById("answer-field")
-        quiz._questions[currentQuestionNumber]._userAnswer = answerField.value.toLowerCase()
+        quiz._questions[currentQuestionNumber]._userAnswer = answerField.value.toString()
         currentQuestionNumber++
     }
     if (currentQuestionNumber === (quiz._questions.length - 1)) {
@@ -55,24 +57,30 @@ const start = () => {
 const createResultItems = () => {
     quiz._questions.forEach(question => {
         let result = ""
+        let resultColor = ""
         if (question._result === true) {
             result = "Correct!"
+            resultColor = "green"
         } else {
             result = "Incorrect!"
+            resultColor = "red"
         }
         const listItem = resultsList.appendChild(document.createElement("li"))
         listItem.innerHTML = `<h3>${question._questionText}</h3>
-        <p class="question-result">${result}</p>
+        <p class="question-result" style="color: ${resultColor}">${result}</p>
         <p>You answered: <span class="user-answer">${question._userAnswer}</span></p>
-        <p>The correct answer was: <span class="correct-answer">${question._answers[question._correctAnswer]}</span></p>`
+        <p>The correct answer was: <span class="correct-answer">${toTitleCase(question._answers[question._correctAnswer])}</span></p>`
     })
 }
 
 const end = () => {
+    const answerField = document.getElementById("answer-field")
+    quiz._questions[currentQuestionNumber]._userAnswer = answerField.value.toString().toLowerCase()
     resultsBox.style.display = "flex"
     answerBox.style.display = "none"
     questionNavButtons.style.display = "none"
-    questionBox.innerHTML = `<p>FINAL RESULTS</p>`
+    questionFrame.style.display = "none"
+    resultsHeader.style.display = "inline-block"
     quiz.markQuiz()
     createResultItems(quiz)
 }
